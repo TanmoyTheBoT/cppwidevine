@@ -1,5 +1,6 @@
 #include <widevine/cdm.h>
 #include <widevine/session.h>
+#include <widevine/pssh.h>
 #include <widevine/crypto.h>
 #include <license_protocol.pb.h>
 #include <stdexcept>
@@ -222,7 +223,7 @@ std::vector<uint8_t> CDM::get_license_challenge(
     // Set type and time
     license_request.set_type(pywidevine_license_protocol::LicenseRequest::NEW);
     license_request.set_request_time(std::time(nullptr));
-    license_request.set_protocol_version(pywidevine_license_protocol::LicenseRequest::VERSION_2_1);
+    license_request.set_protocol_version(pywidevine_license_protocol::VERSION_2_1);
 
     // Set key control nonce
     uint32_t nonce = crypto::random_bytes(4)[0] |

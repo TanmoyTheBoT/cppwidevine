@@ -12,17 +12,13 @@ option(WIDEVINE_BUILD_EXAMPLES "Build examples" ON)
 find_package(Protobuf REQUIRED)
 find_package(OpenSSL REQUIRED)
 
-# Set protobuf output directory
-set(PROTO_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/proto)
+# Generate protobuf files
+set(PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/proto/license_protocol.proto)
+set(PROTO_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 file(MAKE_DIRECTORY ${PROTO_OUTPUT_DIR})
 
-# Generate protobuf files
-set(PROTO_FILES proto/license_protocol.proto)
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS
-    EXPORT_MACRO ""
-    PROTOC_OUT_DIR ${PROTO_OUTPUT_DIR}
-    ${PROTO_FILES}
-)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
+set_source_files_properties(${PROTO_SRCS} ${PROTO_HDRS} PROPERTIES GENERATED TRUE)
 
 # Library sources
 set(WIDEVINE_SOURCES
@@ -37,15 +33,15 @@ set(WIDEVINE_SOURCES
 
 # Create library
 add_library(widevine STATIC ${WIDEVINE_SOURCES})
+add_library(widevine::widevine ALIAS widevine)
 
 target_include_directories(widevine
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${PROTO_OUTPUT_DIR}>  # For generated protobuf headers
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${Protobuf_INCLUDE_DIRS}
 )
 
 target_link_libraries(widevine
