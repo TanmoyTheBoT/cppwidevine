@@ -27,6 +27,12 @@ public:
     std::vector<uint8_t> sign_pss_sha1(const std::vector<uint8_t>& data) const;
 
     /**
+     * Decrypt data using RSA-OAEP with SHA1
+     * Used for decrypting session keys from license response
+     */
+    std::vector<uint8_t> decrypt_oaep_sha1(const std::vector<uint8_t>& ciphertext) const;
+
+    /**
      * Get public key in DER format
      */
     std::vector<uint8_t> public_key_der() const;

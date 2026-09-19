@@ -297,8 +297,40 @@ void CDM::parse_license(
         throw std::runtime_error("No context found for this license");
     }
 
-    // Decrypt session key
-    // TODO: Implement proper session key decryption using RSA-OAEP
+    // Decrypt session key using RSA-OAEP
+    std::vector<uint8_t> encrypted_session_key(
+        signed_message.session_key().begin(),
+        signed_message.session_key().end()
+    );
+
+    std::vector<uint8_t> session_key;
+    if (!encrypted_session_key.empty()) {
+        session_key = impl_->rsa_key_->decrypt_oaep_sha1(encrypted_session_key);
+    } else {
+        // Some licenses don't have session key, use zeros
+        session_key = std::vector<uint8_t>(16, 0);
+    }
+
+    // Derive encryption and MAC keys from session key
+    auto contexts = derive_context(std::vector<uint8_t>(
+        signed_message.msg().begin(), signed_message.msg().end()
+    ));
+    auto derived = derive_keys(contexts.first, contexts.second, session_key);
+
+    // Verify HMAC signature
+    std::vector<uint8_t> computed_mac = crypto::hmac_sha256(
+        derived.mac_key_server,
+        std::vector<uint8_t>(signed_message.msg().begin(), signed_message.msg().end())
+    );
+
+    std::vector<uint8_t> received_signature(
+        signed_message.signature().begin(),
+        signed_message.signature().end()
+    );
+
+    if (computed_mac != received_signature) {
+        throw std::runtime_error("License signature verification failed");
+    }
 
     // Extract keys from license
     for (const auto& key_container : license.key()) {
@@ -307,13 +339,13 @@ void CDM::parse_license(
         // KID
         key.kid.assign(key_container.id().begin(), key_container.id().end());
 
-        // Decrypt key using AES-CBC
+        // Decrypt key using AES-CBC with derived enc_key
         std::vector<uint8_t> iv(key_container.iv().begin(),
                                key_container.iv().end());
         std::vector<uint8_t> encrypted_key(key_container.key().begin(),
                                           key_container.key().end());
 
-        key.key = crypto::aes_cbc_decrypt(ctx_it->second.enc_key, iv, encrypted_key);
+        key.key = crypto::aes_cbc_decrypt(derived.enc_key, iv, encrypted_key);
 
         // Remove PKCS7 padding
         if (!key.key.empty()) {

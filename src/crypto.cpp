@@ -91,6 +91,54 @@ std::vector<uint8_t> RSA::sign_pss_sha1(const std::vector<uint8_t>& data) const 
     return signature;
 }
 
+std::vector<uint8_t> RSA::decrypt_oaep_sha1(const std::vector<uint8_t>& ciphertext) const {
+    EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(impl_->pkey, nullptr);
+    if (!ctx) {
+        throw std::runtime_error("Failed to create PKEY context");
+    }
+
+    if (EVP_PKEY_decrypt_init(ctx) != 1) {
+        EVP_PKEY_CTX_free(ctx);
+        throw std::runtime_error("Failed to initialize decryption");
+    }
+
+    // Set RSA-OAEP padding
+    if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_OAEP_PADDING) != 1) {
+        EVP_PKEY_CTX_free(ctx);
+        throw std::runtime_error("Failed to set OAEP padding");
+    }
+
+    // Set OAEP hash to SHA1
+    if (EVP_PKEY_CTX_set_rsa_oaep_md(ctx, EVP_sha1()) != 1) {
+        EVP_PKEY_CTX_free(ctx);
+        throw std::runtime_error("Failed to set OAEP hash");
+    }
+
+    // Set MGF1 hash to SHA1
+    if (EVP_PKEY_CTX_set_rsa_mgf1_md(ctx, EVP_sha1()) != 1) {
+        EVP_PKEY_CTX_free(ctx);
+        throw std::runtime_error("Failed to set MGF1 hash");
+    }
+
+    // Get output length
+    size_t out_len = 0;
+    if (EVP_PKEY_decrypt(ctx, nullptr, &out_len, ciphertext.data(), ciphertext.size()) != 1) {
+        EVP_PKEY_CTX_free(ctx);
+        throw std::runtime_error("Failed to get output length");
+    }
+
+    // Decrypt
+    std::vector<uint8_t> plaintext(out_len);
+    if (EVP_PKEY_decrypt(ctx, plaintext.data(), &out_len, ciphertext.data(), ciphertext.size()) != 1) {
+        EVP_PKEY_CTX_free(ctx);
+        throw std::runtime_error("Failed to decrypt");
+    }
+
+    EVP_PKEY_CTX_free(ctx);
+    plaintext.resize(out_len);
+    return plaintext;
+}
+
 std::vector<uint8_t> RSA::public_key_der() const {
     unsigned char* der = nullptr;
     int len = i2d_PUBKEY(impl_->pkey, &der);
