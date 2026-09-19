@@ -150,16 +150,6 @@ g++ -std=c++17 example.cpp -lwidevine -lcurl -lssl -lcrypto -lprotobuf -o exampl
 ./example
 ```
 
-**Expected Output:**
-```
-[SIGNING] 00000000000000000000000000000000:227a03650e870def32aae20dd3f396781067d5f8622d2a8fcaa6c1ca60417cce...
-[CONTENT] ccbf5fb4c2965be7aa130ffb3ba9fd73:9cc0c92044cb1d69433f5f5839a159df
-[CONTENT] 9bf0e9cf0d7b55aeb4b289a63bab8610:90f52fd8ca48717b21d0c2fed7a12ae1
-[CONTENT] eb676abbcb345e96bbcf616630f1a3da:100b6c20940f779a4589152b57d2dacb
-[CONTENT] 0294b9599d755de2bbf0fdca3fa5eab7:3bda2f40344c7def614227b9c0f03e26
-[CONTENT] 639da80cf23b55f3b8cab3f64cfa5df6:229f5f29b643e203004b30c4eaf348f4
-```
-
 ## API Documentation
 
 ### Device
