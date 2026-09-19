@@ -1,7 +1,7 @@
 # widevine-cpp
 
-> **✅ Version 0.0.3 - Full Implementation**  
-> Complete C++ Widevine CDM implementation with all core features working.
+> **✅ Version 0.0.5 - Fully Working**  
+> Complete C++ Widevine CDM implementation verified against pywidevine.
 
 A modern C++17 library for Widevine DRM (Digital Rights Management) license acquisition and key decryption.
 
