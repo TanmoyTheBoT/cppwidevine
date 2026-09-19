@@ -224,46 +224,6 @@ cmake --build . --config Release
 ./examples/Release/test_license_server.exe "C:/Path/To/Your/device.wvd"
 ```
 
-**Expected output:**
-```
-=== Widevine-CPP Example ===
-License URL: https://cwip-shaka-proxy.appspot.com/no_auth
-
-[1] Loading device from: C:/Path/To/Your/device.wvd
-    Device loaded successfully
-    Type: Android
-    Security Level: L3
-
-[2] Creating CDM...
-    CDM initialized
-
-[3] Opening session...
-    Session ID: 3cf2dd3b30069cb1619e871900000001
-
-[4] Parsing PSSH...
-    PSSH version: 0
-    Is Widevine: Yes
-
-[5] Generating license challenge...
-    Challenge size: 2172 bytes
-
-[6] Sending challenge to license server...
-    Response size: 1315 bytes
-
-[7] Parsing license...
-    License parsed successfully
-
-[8] Extracting keys...
-[SIGNING] 00000000000000000000000000000000:227a03650e870def32aae20dd3f396781067d5f8622d2a8fcaa6c1ca60417cce...
-[CONTENT] ccbf5fb4c2965be7aa130ffb3ba9fd73:9cc0c92044cb1d69433f5f5839a159df
-[CONTENT] 9bf0e9cf0d7b55aeb4b289a63bab8610:90f52fd8ca48717b21d0c2fed7a12ae1
-[CONTENT] eb676abbcb345e96bbcf616630f1a3da:100b6c20940f779a4589152b57d2dacb
-[CONTENT] 0294b9599d755de2bbf0fdca3fa5eab7:3bda2f40344c7def614227b9c0f03e26
-[CONTENT] 639da80cf23b55f3b8cab3f64cfa5df6:229f5f29b643e203004b30c4eaf348f4
-
-=== SUCCESS ===
-```
-
 The output format matches pywidevine exactly. All CONTENT keys are identical when using the same PSSH and device.
 
 ## Integration Example
