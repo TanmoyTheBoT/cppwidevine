@@ -1,0 +1,44 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.user
+*.suo
+*.vcxproj.user
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Compiled
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Generated protobuf
+*_pb2.py
+*_pb2.pyi
+*.pb.cc
+*.pb.h
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Package managers
+vcpkg_installed/
+node_modules/
+
+# Testing
+test_output/
+*.wvd
+*.mp4
+*.mkv
