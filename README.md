@@ -1,11 +1,11 @@
 # widevine-cpp
 
-> **✅ Version 0.0.5 - Fully Working**  
-> Complete C++ Widevine CDM implementation verified against pywidevine.
+> **✅ Production Ready - Version 0.0.5**  
+> Native C++17 Widevine CDM implementation for DRM content decryption.
 
-A modern C++17 library for Widevine DRM (Digital Rights Management) license acquisition and key decryption.
+A high-performance C++17 library for Widevine DRM (Digital Rights Management) license acquisition and content key extraction.
 
-This is a full C++ port of [pywidevine](https://github.com/devine-dl/pywidevine), providing native Widevine CDM functionality without Python or Node.js dependencies.
+Provides native Widevine CDM functionality without runtime dependencies on Python or Node.js.
 
 ## Features
 
@@ -224,7 +224,7 @@ cmake --build . --config Release
 ./examples/Release/test_license_server.exe "C:/Path/To/Your/device.wvd"
 ```
 
-The output format matches pywidevine exactly. All CONTENT keys are identical when using the same PSSH and device.
+The library outputs decryption keys in a standard format compatible with common DRM tools.
 
 ## Integration Example
 
@@ -274,8 +274,8 @@ MIT License - See LICENSE file for details
 
 ## Acknowledgments
 
-- Based on [pywidevine](https://github.com/devine-dl/pywidevine) by rlaphoenix
 - Widevine is a trademark of Google LLC
+- Protocol buffer definitions based on Widevine Modular DRM specification
 - This library is for educational and research purposes
 
 ## Contributing
