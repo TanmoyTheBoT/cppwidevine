@@ -12,8 +12,17 @@ option(WIDEVINE_BUILD_EXAMPLES "Build examples" ON)
 find_package(Protobuf REQUIRED)
 find_package(OpenSSL REQUIRED)
 
+# Set protobuf output directory
+set(PROTO_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/proto)
+file(MAKE_DIRECTORY ${PROTO_OUTPUT_DIR})
+
 # Generate protobuf files
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/license_protocol.proto)
+set(PROTO_FILES proto/license_protocol.proto)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS
+    EXPORT_MACRO ""
+    PROTOC_OUT_DIR ${PROTO_OUTPUT_DIR}
+    ${PROTO_FILES}
+)
 
 # Library sources
 set(WIDEVINE_SOURCES
@@ -22,6 +31,7 @@ set(WIDEVINE_SOURCES
     src/pssh.cpp
     src/key.cpp
     src/session.cpp
+    src/crypto.cpp
     ${PROTO_SRCS}
 )
 
@@ -31,10 +41,11 @@ add_library(widevine STATIC ${WIDEVINE_SOURCES})
 target_include_directories(widevine
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>  # For generated protobuf headers
+        $<BUILD_INTERFACE:${PROTO_OUTPUT_DIR}>  # For generated protobuf headers
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${Protobuf_INCLUDE_DIRS}
 )
 
 target_link_libraries(widevine
