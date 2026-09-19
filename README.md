@@ -276,6 +276,7 @@ MIT License - See LICENSE file for details
 
 - Widevine is a trademark of Google LLC
 - Protocol buffer definitions based on Widevine Modular DRM specification
+- Protocol implementation reference: [pywidevine](https://github.com/devine-dl/pywidevine)
 - This library is for educational and research purposes
 
 ## Contributing
