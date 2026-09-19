@@ -197,24 +197,19 @@ std::vector<uint8_t> aes_cbc_decrypt(
         throw std::runtime_error("Failed to initialize decryption");
     }
 
-    std::vector<uint8_t> plaintext(ciphertext.size() + AES_BLOCK_SIZE);
+    // Disable automatic padding - we handle PKCS7 manually
+    EVP_CIPHER_CTX_set_padding(ctx, 0);
+
+    std::vector<uint8_t> plaintext(ciphertext.size());
     int len = 0;
-    int plaintext_len = 0;
 
     if (EVP_DecryptUpdate(ctx, plaintext.data(), &len, ciphertext.data(), ciphertext.size()) != 1) {
         EVP_CIPHER_CTX_free(ctx);
         throw std::runtime_error("Failed to decrypt");
     }
-    plaintext_len = len;
-
-    if (EVP_DecryptFinal_ex(ctx, plaintext.data() + len, &len) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
-        throw std::runtime_error("Failed to finalize decryption");
-    }
-    plaintext_len += len;
 
     EVP_CIPHER_CTX_free(ctx);
-    plaintext.resize(plaintext_len);
+    plaintext.resize(len);
     return plaintext;
 }
 

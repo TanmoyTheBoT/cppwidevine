@@ -18,9 +18,8 @@ struct SessionState {
 
     // Context data for key derivation
     struct Context {
-        std::vector<uint8_t> enc_key;
-        std::vector<uint8_t> mac_key_client;
-        std::vector<uint8_t> mac_key_server;
+        std::vector<uint8_t> enc_context;
+        std::vector<uint8_t> mac_context;
     };
     std::map<std::vector<uint8_t>, Context> contexts; // request_id -> context
 };

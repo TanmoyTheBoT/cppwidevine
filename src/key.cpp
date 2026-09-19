@@ -5,6 +5,11 @@ namespace widevine {
 
 // Helper for hex conversion
 std::string Key::kid_hex() const {
+    // If KID is empty, return all zeros (matching pywidevine)
+    if (kid.empty()) {
+        return "00000000000000000000000000000000";
+    }
+
     std::string result;
     for (auto byte : kid) {
         char hex[3];

@@ -26,14 +26,13 @@ public:
 // 4       1     Type (1=CHROME, 2=ANDROID)
 // 5       1     Security level
 // 6       1     Flags
-// 7       1     Reserved padding
-// 8       2     Private key length (uint16_t, little-endian)
+// 7       2     Private key length (uint16_t, big-endian)
 // 10      N     Private key (PKCS#8 DER)
 // 10+N    2     Client ID length (uint16_t, little-endian)
 // 12+N    M     Client ID (DER certificate)
 
-static uint16_t read_le16(const uint8_t* data) {
-    return data[0] | (data[1] << 8);
+static uint16_t read_be16(const uint8_t* data) {
+    return (data[0] << 8) | data[1];
 }
 
 Device Device::from_wvd_data(const std::vector<uint8_t>& data) {
@@ -70,21 +69,20 @@ Device Device::from_wvd_data(const std::vector<uint8_t>& data) {
     // Flags (skip)
     offset++;
 
-    // Padding (skip for version 2)
-    if (version == 2) {
-        offset++;
-    }
-
     // Private key length
     if (offset + 2 > data.size()) {
         throw std::runtime_error("Truncated WVD file (private_key length)");
     }
-    uint16_t private_key_len = read_le16(&data[offset]);
+    uint16_t private_key_len = read_be16(&data[offset]);
     offset += 2;
 
     // Private key
     if (offset + private_key_len > data.size()) {
-        throw std::runtime_error("Truncated WVD file (private_key data)");
+        char buf[256];
+        snprintf(buf, sizeof(buf),
+                "Truncated WVD file (private_key data): offset=%zu, key_len=%u, file_size=%zu, need=%zu",
+                offset - 2, private_key_len, data.size(), offset + private_key_len);
+        throw std::runtime_error(buf);
     }
     std::vector<uint8_t> private_key(data.begin() + offset,
                                      data.begin() + offset + private_key_len);
@@ -94,7 +92,7 @@ Device Device::from_wvd_data(const std::vector<uint8_t>& data) {
     if (offset + 2 > data.size()) {
         throw std::runtime_error("Truncated WVD file (client_id length)");
     }
-    uint16_t client_id_len = read_le16(&data[offset]);
+    uint16_t client_id_len = read_be16(&data[offset]);
     offset += 2;
 
     // Client ID
