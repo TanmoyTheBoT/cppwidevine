@@ -73,7 +73,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DWIDEVINE_BUILD_EXAMPLES=OFF
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake -DWIDEVINE_BUILD_EXAMPLES=OFF -G "Visual Studio 18 2026" -A x64
           cmake --build . --config Release
 
       - name: Build (Linux/macOS)
